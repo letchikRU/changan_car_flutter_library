@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 10, 10, 10),
+      backgroundColor: const Color.fromARGB(255, 10, 10, 10),
       body: SafeArea(
         child: FittedBox(
           child: SizedBox(

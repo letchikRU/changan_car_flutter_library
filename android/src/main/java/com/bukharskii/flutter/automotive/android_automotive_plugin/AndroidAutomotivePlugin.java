@@ -42,7 +42,7 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
   /// when the Flutter Engine is detached from the Activity
   private FlutterPluginBinding flutterPluginBinding;
   private MethodChannel channel;
-  private CarAvcManagerUtils carAvcManagerUtils;
+  private CarConnectionService carConnectionService;
 
   private  CurrentMetadataManagerService currentMetadataManagerService;
 
@@ -75,10 +75,7 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
 
     config = new Config(flutterPluginBinding.getApplicationContext());
 
-//    currentMetadataManagerService = new CurrentMetadataManagerService();
-
-//    Intent intent = new Intent(flutterPluginBinding.getApplicationContext(), CurrentMetadataManagerService.class);
-//    flutterPluginBinding.getApplicationContext().startService(intent);
+    carConnectionService = new CarConnectionService();
   }
 
   private static String carPropertyValueToString(Object value) {
@@ -121,7 +118,6 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
         str.append("\""+carPropertyValueToString(carPropertyValue.getValue())+"\"");
       } catch (Exception e) {
         str.append("\"0\"");
-        carAvcManagerUtils.carAvcManagerListener.onLogEvent(">>>>>> [Convert To Double] exception: " + e.toString());
       }
 
       str.append("}");
@@ -162,46 +158,17 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     if (call.method.equals("connect")) {
-      carAvcManagerUtils = new CarAvcManagerUtils(flutterPluginBinding.getApplicationContext(), new CarAvcManagerListener() {
-        @Override
-        public void onHvacChangeEvent(CarPropertyValue carPropertyValue) {
-          channel.invokeMethod("onHvacChangeEvent", carPropertyToJsonString(carPropertyValue));
-
-          try {
-            if (carPropertyValue.getPropertyId() == CarHvacManager.ID_HVAC_IN_OUT_TEMP) {
-              onLogEvent(">>>>>> [ID_HVAC_IN_OUT_TEMP]");
-              float floatValue = ((Integer) carPropertyValue.getValue()).floatValue();
-              onLogEvent(">>>>>> [ID_HVAC_IN_OUT_TEMP] CarHvacManager onChangeEvent: CarHvacManager.ID_HVAC_IN_OUT_TEMP value = " + floatValue);
-              if (carPropertyValue.getAreaId() == 1) {
-                onLogEvent(">>>>>> [ID_HVAC_IN_OUT_TEMP] CarHvacManager onChangeEvent: InOutCAR_INSIDE value = " + floatValue);
-              } else if (carPropertyValue.getAreaId() == 4) {
-                onLogEvent(">>>>>> [ID_HVAC_IN_OUT_TEMP] CarHvacManager onChangeEvent: InOutCAR_OUTSIDE value = " + floatValue);
-              }
-            }
-          } catch (Exception e) {
-            onLogEvent(">>>>>> [ID_HVAC_IN_OUT_TEMP] ((Float) carPropertyValue.getValue()).floatValue(); exception: " + e.toString());
+      carConnectionService.connect();
+      carConnectionService.registerCallback(new CarHvacManager.CarHvacEventCallback() {
+          @Override
+          public void onChangeEvent(CarPropertyValue carPropertyValue) {
+              channel.invokeMethod("onHvacChangeEvent", carPropertyToJsonString(carPropertyValue));
           }
-        }
 
-        @Override
-        public void onCarSensorEvent(CarSensorEvent carSensorEvent) {
-          channel.invokeMethod("onCarSensorEvent", carSensorEventToJsonString(carSensorEvent));
-        }
+          @Override
+          public void onErrorEvent(int i, int i1) {
 
-        @Override
-        public void onCarClusterInteractionEvent(String value) {
-          channel.invokeMethod("onCarClusterInteractionEvent", value);
-        }
-
-        @Override
-        public void onCarVendorExtensionCallback(CarPropertyValue carPropertyValue) {
-          channel.invokeMethod("onCarVendorExtensionCallback", carPropertyToJsonString(carPropertyValue));
-        }
-
-        @Override
-        public void onLogEvent(String logEvent) {
-          channel.invokeMethod("onLogEvent", logEvent);
-        }
+          }
       });
       result.success(null);
     }
@@ -211,7 +178,6 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
       int area = call.argument("area");
       int value = call.argument("value");
 
-      carAvcManagerUtils.setHvacIntProperty(propertyId, area, value);
       result.success(null);
     }
     //
@@ -219,7 +185,7 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
       int propertyId = call.argument("propertyId");
       int area = call.argument("area");
 
-      int value = carAvcManagerUtils.getHvacIntProperty(propertyId, area);
+      int value = carConnectionService.getIntProperty(propertyId, area);
       result.success(value);
     }
     //
@@ -228,7 +194,6 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
       int area = call.argument("area");
       float value = ((Double) call.argument("value")).floatValue();
 
-      carAvcManagerUtils.setHvacFloatProperty(propertyId, area, value);
       result.success(null);
     }
     //
@@ -236,25 +201,13 @@ public class AndroidAutomotivePlugin implements FlutterPlugin, MethodCallHandler
       int propertyId = call.argument("propertyId");
       int area = call.argument("area");
 
-      float value = carAvcManagerUtils.getHvacFloatProperty(propertyId, area);
-      result.success(value);
+      result.success(null);
     }
     //
     else if (call.method.equals("getLatestSensorEvent")) {
       int sensorType = call.argument("sensorType");
 
-      if (carAvcManagerUtils != null) {
-        CarSensorEvent value = carAvcManagerUtils.getLatestSensorEvent(sensorType);
-        if (value != null) {
-          result.success(carSensorEventToJsonString(value));
-        }
-        else {
-          result.success(null);
-        }
-      }
-      else {
-        result.success(null);
-      }
+      result.success(null);
     }
     //
     else if (call.method.equals("setAccessibilityServiceCallbackHandler")) {

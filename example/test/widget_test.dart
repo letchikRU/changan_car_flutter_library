@@ -50,7 +50,7 @@ void main() {
       mockAdapter.simulateIgnitionChange(true);
 
       await Future.delayed(
-          Duration(milliseconds: 100)); // Ожидаем обновления состояния
+          const Duration(milliseconds: 100)); // Ожидаем обновления состояния
 
       expect(mockAdapter.onSeatHeatChange, isNotNull);
       mockAdapter.onSeatHeatChange = (isDriver, heatLevel) {
@@ -65,7 +65,7 @@ void main() {
       mockAdapter.simulateIgnitionChange(true);
 
       await Future.delayed(
-          Duration(milliseconds: 100)); // Ожидаем обновления состояния
+          const Duration(milliseconds: 100)); // Ожидаем обновления состояния
 
       mockAdapter.onSeatVentilationChange = (isDriver, ventilationLevel) {
         if (!isDriver) {
@@ -80,7 +80,7 @@ void main() {
 
       mockAdapter.simulateIgnitionChange(false);
 
-      await Future.delayed(Duration(milliseconds: 100)); // Ожидаем сброса
+      await Future.delayed(const Duration(milliseconds: 100)); // Ожидаем сброса
 
       mockAdapter.onSeatHeatChange = (isDriver, heatLevel) {
         expect(heatLevel, equals(0));
@@ -95,12 +95,12 @@ void main() {
       mockAdapter.simulateIgnitionChange(true);
       mockAdapter.simulateTemperatureChange(10.0);
 
-      await Future.delayed(Duration(milliseconds: 100)); // Ожидаем включения
+      await Future.delayed(const Duration(milliseconds: 100)); // Ожидаем включения
 
       mockAdapter.simulateSeatHeatChange(true, 2);
 
       await Future.delayed(
-          Duration(milliseconds: 100)); // Ожидаем обработки внешнего изменения
+          const Duration(milliseconds: 100)); // Ожидаем обработки внешнего изменения
 
       mockAdapter.onSeatHeatChange = (isDriver, heatLevel) {
         if (isDriver) {
