@@ -1,4 +1,4 @@
-import 'package:android_automotive_plugin/android_automotive_plugin.dart';
+import '../android_automotive_plugin.dart';
 
 import 'car_sensor_types.dart';
 

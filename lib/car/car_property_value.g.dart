@@ -8,10 +8,10 @@ part of 'car_property_value.dart';
 
 CarPropertyValue _$CarPropertyValueFromJson(Map<String, dynamic> json) =>
     CarPropertyValue(
-      json['areaId'] as int,
-      json['propertyId'] as int,
-      json['status'] as int,
-      json['timestamp'] as int,
+      (json['areaId'] as num).toInt(),
+      (json['propertyId'] as num).toInt(),
+      (json['status'] as num).toInt(),
+      (json['timestamp'] as num).toInt(),
       json['value'],
     );
 

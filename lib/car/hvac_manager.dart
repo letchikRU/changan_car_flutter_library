@@ -1,4 +1,4 @@
-import 'package:android_automotive_plugin/android_automotive_plugin.dart';
+import '../android_automotive_plugin.dart';
 
 import 'hvac_property_ids.dart';
 import 'vehicle_area_in_out_car.dart';

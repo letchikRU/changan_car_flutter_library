@@ -63,9 +63,6 @@ Future<void> initializeBackgroundService() async {
   await _log("done");
 }
 
-late SeatManager _seatManager;
-late Timer _timer;
-
 @pragma('vm:entry-point')
 onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
@@ -86,13 +83,13 @@ onStart(ServiceInstance service) async {
   SeatSettings passengerSettings =
       await PreferencesManager.loadPassengerSeatSettings();
 
-  _seatManager = SeatManager(
+  SeatManager(
     automotiveAdapter: adapter,
     driverSettings: driverSettings,
     passengerSettings: passengerSettings,
   );
 
-  _timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+  Timer.periodic(const Duration(seconds: 3), (timer) async {
     final newDriverSettings = await PreferencesManager.loadDriverSeatSettings();
     final newPassengerSettings =
         await PreferencesManager.loadPassengerSeatSettings();
@@ -105,7 +102,7 @@ onStart(ServiceInstance service) async {
       await _log("settings updated, restart SeatManager");
 
       // restart manager
-      _seatManager = SeatManager(
+      SeatManager(
         automotiveAdapter: adapter,
         driverSettings: driverSettings,
         passengerSettings: passengerSettings,
@@ -127,8 +124,8 @@ _log(String text) async {
     log += "[${DateTime.now().toString()}] $text\n\n";
     await FileWriter.writeFileToDownloadsDir(utf8.encode(log), "bglog.txt");
 
-    print("[BG SERVICE] $text");
+    // print("[BG SERVICE] $text");
   } catch (e) {
-    print(e.toString());
+    // print(e.toString());
   }
 }

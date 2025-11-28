@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('SeatManager Tests', () {
     late MockAutomotiveAdapter mockAdapter;
-    late SeatManager seatManager;
 
     setUp(() {
       mockAdapter = MockAutomotiveAdapter();
@@ -25,7 +24,7 @@ void main() {
         autoVentilationTime: 4,
       );
 
-      seatManager = SeatManager(
+      SeatManager(
         automotiveAdapter: mockAdapter,
         driverSettings: driverSettings,
         passengerSettings: passengerSettings,

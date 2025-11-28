@@ -6,16 +6,17 @@ part of 'car_sensor_event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CarSensorEvent _$CarSensorEventFromJson(Map<String, dynamic> json) =>
-    CarSensorEvent(
-      json['sensorType'] as int,
-      json['timestamp'] as int,
-      (json['floatValues'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
-          .toList(),
-      (json['intValues'] as List<dynamic>).map((e) => e as int).toList(),
-      (json['longValues'] as List<dynamic>).map((e) => e as int).toList(),
-    );
+CarSensorEvent _$CarSensorEventFromJson(
+  Map<String, dynamic> json,
+) => CarSensorEvent(
+  (json['sensorType'] as num).toInt(),
+  (json['timestamp'] as num).toInt(),
+  (json['floatValues'] as List<dynamic>)
+      .map((e) => (e as num).toDouble())
+      .toList(),
+  (json['intValues'] as List<dynamic>).map((e) => (e as num).toInt()).toList(),
+  (json['longValues'] as List<dynamic>).map((e) => (e as num).toInt()).toList(),
+);
 
 Map<String, dynamic> _$CarSensorEventToJson(CarSensorEvent instance) =>
     <String, dynamic>{

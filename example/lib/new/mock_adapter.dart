@@ -4,10 +4,6 @@ class MockAutomotiveAdapter extends AutomotiveAdapter {
   // Симулированные состояния
   bool _ignitionOn = false;
   double _insideTemperature = 20.0;
-  int _driverHeatLevel = 0;
-  int _driverVentilationLevel = 0;
-  int _passengerHeatLevel = 0;
-  int _passengerVentilationLevel = 0;
 
   MockAutomotiveAdapter();
 
@@ -33,45 +29,31 @@ class MockAutomotiveAdapter extends AutomotiveAdapter {
   }
 
   void simulateSeatHeatChange(bool isDriver, int heatLevel) {
-    if (isDriver) {
-      _driverHeatLevel = heatLevel;
-    } else {
-      _passengerHeatLevel = heatLevel;
-    }
     onSeatHeatChange?.call(isDriver, heatLevel);
   }
 
   void simulateSeatVentilationChange(bool isDriver, int ventilationLevel) {
-    if (isDriver) {
-      _driverVentilationLevel = ventilationLevel;
-    } else {
-      _passengerVentilationLevel = ventilationLevel;
-    }
     onSeatVentilationChange?.call(isDriver, ventilationLevel);
   }
 
   // Методы управления (заглушки)
   @override
   Future<void> setDriverHeatLevel(int level) async {
-    _driverHeatLevel = level;
     onSeatHeatChange?.call(true, level);
   }
 
   @override
   Future<void> setPassengerHeatLevel(int level) async {
-    _passengerHeatLevel = level;
     onSeatHeatChange?.call(false, level);
   }
 
   @override
   Future<void> setDriverVentilationLevel(int level) async {
-    _driverVentilationLevel = level;
     onSeatVentilationChange?.call(true, level);
   }
 
   @override
   Future<void> setPassengerVentilationLevel(int level) async {
-    _passengerVentilationLevel = level;
     onSeatVentilationChange?.call(false, level);
   }
 
